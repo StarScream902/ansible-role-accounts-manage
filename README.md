@@ -2,7 +2,6 @@ Accounts namage role
 =========
 
 A simple Ansible role for accounts and groups to manage, also it can manage sudoers rules
-Производит создание пользователей в ОС, добавляет SSH-ключ и дает права всем пользователям группы `adm/wheel` sudo без пароля
 
 Requirements
 ------------
