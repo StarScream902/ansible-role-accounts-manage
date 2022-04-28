@@ -1,0 +1,22 @@
+---
+accounts_manage_groups: []
+# - "group1"
+# - "group2"
+
+accounts_manage_users: []
+# - username: "user"
+#   groups: "group_1, group_2"
+#   ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+
+accounts_manage_sudoers: |
+  {% if ansible_os_family == "Debian" %}
+  %adm        ALL=(ALL:ALL)       NOPASSWD: ALL
+  {% endif %}
+  {% if ansible_os_family == "RedHat" %}
+  %wheel        ALL=(ALL:ALL)       NOPASSWD: ALL
+  {% endif %}
+
+accounts_manage_sudoers_rules: []
+# - name: ""
+#   rule: |
+#     some rule

@@ -1,0 +1,43 @@
+---
+- name: accounts_manage | create groups
+  group:
+    name: '{{ item }}'
+  with_items: "{{ accounts_manage_groups }}"
+  when: accounts_manage_groups is defined
+
+- name: accounts_manage | create users
+  user:
+    name: '{{ item.username }}'
+    create_home: yes
+    groups: '{{ item.groups }}'
+    home: "/home/{{ item.username }}"
+    append: yes
+    shell: /bin/bash
+  with_items: "{{ accounts_manage_users }}"
+  when: accounts_manage_users is defined
+
+- name: accounts_manage | add to user authorized_keys
+  authorized_key:
+    user: '{{ item.username }}'
+    key: '{{ item.ssh_keys }}'
+    path: '/home/{{ item.username }}/.ssh/authorized_keys'
+    state: present
+  when: item.ssh_keys is defined
+  with_items: "{{ accounts_manage_users }}"
+
+- name: accounts_manage | configure sudoers
+  copy:
+    dest: /etc/sudoers.d/sudoers
+    content: "{{ accounts_manage_sudoers }}"
+    mode: 0440
+    validate: '/usr/sbin/visudo -cf %s'
+  when: accounts_manage_sudoers is defined
+
+- name: accounts_manage | configure sudoers
+  copy:
+    dest: "/etc/sudoers.d/{{ item.name }}"
+    content: "{{ item.rule }}"
+    mode: 0440
+    validate: '/usr/sbin/visudo -cf %s'
+  with_items: "{{ accounts_manage_sudoers_rules }}"
+  when: accounts_manage_sudoers_rules is defined
