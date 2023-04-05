@@ -2,7 +2,7 @@
 dependencies: []
 
 galaxy_info:
-  role_name: accounts-manage
+  role_name: accounts_manage
   author: "Andrey Svezhintsev"
   description: PostgreSQL server for Linux.
   company: "StarScream902"

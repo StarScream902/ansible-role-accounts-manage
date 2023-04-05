@@ -1,12 +1,20 @@
 ---
 accounts_manage_groups: []
-# - "group1"
-# - "group2"
+# - name: "group1"
+#   host_groups: "server1"
+# - name: "group2"
+#   host_groups: "all"
 
 accounts_manage_users: []
 # - username: "user"
 #   groups: "group_1, group_2"
 #   ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+#   state: absent
+#   host_groups: "all"
+# - username: "user2"
+#   groups: "group_1"
+#   ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+#   host_groups: "server1"
 
 accounts_manage_sudoers: |
   {% if ansible_os_family == "Debian" %}

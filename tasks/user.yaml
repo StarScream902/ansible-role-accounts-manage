@@ -1,0 +1,22 @@
+- name: Accounts_manage | Printing of a processeing user
+  ansible.builtin.debug:
+    msg: "The user {{ item.username }} is processing on host {{ ansible_hostname }}"
+
+- name: Accounts_manage | Create users
+  ansible.builtin.user:
+    name: '{{ item.username }}'
+    create_home: true
+    groups: '{{ item.groups }}'
+    home: "/home/{{ item.username }}"
+    append: true
+    shell: /bin/bash
+    state: "{{ item.state | default('present') }}"
+  when: accounts_manage_users is defined
+
+- name: Accounts_manage | Add to user authorized_keys
+  ansible.posix.authorized_key:
+    user: '{{ item.username }}'
+    key: '{{ item.ssh_keys }}'
+    path: '/home/{{ item.username }}/.ssh/authorized_keys'
+    state: present
+  when: item.ssh_keys is defined

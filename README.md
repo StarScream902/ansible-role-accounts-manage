@@ -13,13 +13,21 @@ Role Variables
 
 ```yaml
 accounts_manage_groups:
-- "group1"
-- "group2"
+  - name: "group1"
+    host_groups: "server1" # if you want to create a group on particular hosts
+  - name: "group2"
+    host_groups: "all" # if you want to create a group on all hosts
 
 accounts_manage_users:
-- username: "user"
-  groups: "group_1, group_2"
-  ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+  - username: "user"
+    groups: "group_1, group_2" # if you want to create a user on particular hosts
+    ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+    state: absent
+    host_groups: "all"
+  - username: "user2"
+    groups: "group_1" # if you want to create a user on all hosts
+    ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAA"
+    host_groups: "server1"
 
 accounts_manage_sudoers: |
   {% if ansible_os_family == "Debian" %}

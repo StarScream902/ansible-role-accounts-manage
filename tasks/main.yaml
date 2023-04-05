@@ -1,43 +1,31 @@
----
-- name: accounts_manage | create groups
-  group:
-    name: '{{ item }}'
+- name: Accounts_manage | Create groups
+  ansible.builtin.group:
+    name: '{{ item.name }}'
   with_items: "{{ accounts_manage_groups }}"
-  when: accounts_manage_groups is defined
+  when:
+    - accounts_manage_groups is defined
+    - item.host_groups is defined and (item.host_groups == "all" or item.host_groups in group_names)
 
-- name: accounts_manage | create users
-  user:
-    name: '{{ item.username }}'
-    create_home: yes
-    groups: '{{ item.groups }}'
-    home: "/home/{{ item.username }}"
-    append: yes
-    shell: /bin/bash
-  with_items: "{{ accounts_manage_users }}"
-  when: accounts_manage_users is defined
-
-- name: accounts_manage | add to user authorized_keys
-  authorized_key:
-    user: '{{ item.username }}'
-    key: '{{ item.ssh_keys }}'
-    path: '/home/{{ item.username }}/.ssh/authorized_keys'
-    state: present
-  when: item.ssh_keys is defined
-  with_items: "{{ accounts_manage_users }}"
-
-- name: accounts_manage | configure sudoers
-  copy:
+- name: Accounts_manage | Configure sudoers
+  ansible.builtin.copy:
     dest: /etc/sudoers.d/sudoers
     content: "{{ accounts_manage_sudoers }}"
     mode: 0440
     validate: '/usr/sbin/visudo -cf %s'
   when: accounts_manage_sudoers is defined
 
-- name: accounts_manage | configure sudoers
-  copy:
+- name: Accounts_manage | Configure sudoers
+  ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ item.name }}"
     content: "{{ item.rule }}"
     mode: 0440
     validate: '/usr/sbin/visudo -cf %s'
   with_items: "{{ accounts_manage_sudoers_rules }}"
   when: accounts_manage_sudoers_rules is defined
+
+- name: Accounts_manage | Incluse tasks
+  ansible.builtin.include_tasks: "user.yaml"
+  loop: "{{ accounts_manage_users }}"
+  when:
+    - accounts_manage_users is defined
+    - item.host_groups is defined and (item.host_groups == "all" or item.host_groups in group_names)
